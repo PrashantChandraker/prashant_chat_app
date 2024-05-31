@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
-          'Welcome to  P  Chat',
+          'Welcome  to  PC Chat',
         ),
       ),
       body: Stack(
@@ -42,9 +42,31 @@ class _LoginScreenState extends State<LoginScreen> {
             duration: Duration(seconds: 1),
             child: Image.asset('assets/images/launcher_icon.png'),
           ),
+          Positioned(
+            bottom: mq.height * 0.24,
+            // left: mq.width * 0.1,
+            width: mq.width * 1,
+            height: mq.height * 0.09,
+            child: Text('Stay connected with your \nfriends and family',
+            textAlign: TextAlign.center,
+             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),),
+
+            Positioned(
+            bottom: mq.height * 0.15,
+            // left: mq.width * 0.10,
+            width: mq.width * 1,
+            height: mq.height * 0.09,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.security_rounded, size: 20,color: Color.fromARGB(255, 3, 155, 8),),
+
+                Text(' Secure, Private & Encrypted...', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+              ],
+            ),),
           // google lgin button
           Positioned(
-            bottom: mq.height * 0.15,
+            bottom: mq.height * 0.10,
             left: mq.width * 0.05,
             width: mq.width * 0.9,
             height: mq.height * 0.07,

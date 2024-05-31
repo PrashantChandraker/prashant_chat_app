@@ -1,19 +1,27 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:prashant_chat_app/screens/auth/login_screen.dart';
+import 'package:prashant_chat_app/screens/splash_screen.dart';
 
 import 'firebase_options.dart';
-
 
 // global object for accessing device screen size
 late Size mq;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(MyApp());
+
+  //enter full screen
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  
+  //for setting orientation to potrait only
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp, DeviceOrientation.portraitDown
+  ]).then((value) {
+    _initializeFirebase();
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -23,9 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      
       debugShowCheckedModeBanner: false,
-      
       theme: ThemeData(
         // textTheme: GoogleFonts.lemonTextTheme(),
         useMaterial3: false,
@@ -33,17 +39,18 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           centerTitle: true,
           titleTextStyle: TextStyle(
-            color: Color.fromARGB(255, 255, 255, 255),
-            fontWeight: FontWeight.normal,
-            fontSize: 60,
-         fontFamily: 'KolkerBrush',
-            fontStyle: FontStyle.normal
-          ),
+              color: Color.fromARGB(255, 255, 255, 255),
+              fontWeight: FontWeight.normal,
+              fontSize: 20,
+              fontFamily: 'Orbitron',
+              fontStyle: FontStyle.normal),
         ),
-      
       ),
-      home: LoginScreen(),
+      home: SplashScreen(),
     );
   }
 }
 
+_initializeFirebase() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+}

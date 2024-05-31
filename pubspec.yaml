@@ -87,10 +87,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: KolkerBrush
-      fonts:
-        # - asset: assets/fonts/Poppins/Poppins-BlackItalic.ttf
-        - asset: assets/fonts/KolkerBrush-Regular.ttf
+    - family: Orbitron
+      fonts:  
+        - asset: assets/fonts/Orbitron-VariableFont_wght.ttf
           style: italic
     # # - family: Trajan Pro
     # #   fonts:

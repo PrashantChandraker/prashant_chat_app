@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
         
    leading: Icon(CupertinoIcons.home),
        
-        title: Text('P  Chat',),
+        title: Text('PC  Chat',),
         actions: [IconButton(onPressed: (){}, icon: Icon(Icons.search)),
         IconButton(onPressed: (){}, icon: Icon(Icons.more_vert)),
         ],
@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButton: FloatingActionButton(onPressed: (){},
         child: Icon(CupertinoIcons.chat_bubble_2),
         ),
-        body: Text('data',style: TextStyle(fontFamily: 'KolkerBrush'),),
+        body: Text('data',style: TextStyle(fontWeight: FontWeight.w500),),
     );
   }
 }
