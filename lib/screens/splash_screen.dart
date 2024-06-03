@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:prashant_chat_app/api/apis.dart';
 
 import 'package:prashant_chat_app/screens/auth/login_screen.dart';
 import 'package:prashant_chat_app/screens/home_screen.dart';
@@ -27,9 +28,9 @@ class _SplashScreenState extends State<SplashScreen> {
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
       );
 
-      if (FirebaseAuth.instance.currentUser != null) {
+      if (APIs.auth.currentUser != null) {
         //to print ur data in debug console
-        debugPrint('\nUser: ${FirebaseAuth.instance.currentUser}');
+        debugPrint('\nUser: ${APIs.auth.currentUser}');
         //navigate to home screen
         Navigator.pushReplacement(
           context,

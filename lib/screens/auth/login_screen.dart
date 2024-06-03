@@ -1,9 +1,8 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:prashant_chat_app/api/apis.dart';
 import 'package:prashant_chat_app/helpers/dialogs.dart';
 import 'package:prashant_chat_app/screens/home_screen.dart';
 
@@ -69,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       // Once signed in, return the UserCredential
-      return await FirebaseAuth.instance.signInWithCredential(credential);
+      return await APIs.auth.signInWithCredential(credential);
     } catch (e) {
       print('\n_signInWithGoogle : $e');
       Dialogs.showSnacbar(context, 'No Internet Connection');
