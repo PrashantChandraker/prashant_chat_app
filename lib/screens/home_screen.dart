@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,7 +24,12 @@ class _HomeScreenState extends State<HomeScreen> {
         IconButton(onPressed: (){}, icon: Icon(Icons.more_vert)),
         ],
         ),
-        floatingActionButton: FloatingActionButton(onPressed: (){},
+        floatingActionButton: FloatingActionButton(onPressed: () async {
+
+          // trial to check logout function is working or not
+          await FirebaseAuth.instance.signOut();
+          await GoogleSignIn().signOut();
+        },
         child: Icon(CupertinoIcons.chat_bubble_2),
         ),
         body: Text('data',style: TextStyle(fontWeight: FontWeight.w500),),
