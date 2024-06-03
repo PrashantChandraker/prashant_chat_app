@@ -1,4 +1,10 @@
+import 'dart:io';
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:prashant_chat_app/helpers/dialogs.dart';
 import 'package:prashant_chat_app/screens/home_screen.dart';
 
 import '../../main.dart';
@@ -21,6 +27,55 @@ class _LoginScreenState extends State<LoginScreen> {
         _isAnimate = true;
       });
     });
+  }
+
+  _handleGoogleButtonClick() {
+    _signInWithGoogle().then((user) {
+      //debug console printing
+     if(user !=null){
+       print(
+        '\nUser : ${(user.user)}',
+      );
+      print('\nUser Additional Information : ${user.additionalUserInfo}');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(),
+        ),
+      );
+     }
+    });
+  }
+
+  Future<UserCredential?> _signInWithGoogle() async {
+    try {
+      await InternetAddress.lookup('google.com');
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      print('\n_signInWithGoogle : $e');
+      Dialogs.showSnacbar(context, 'No Internet Connection');
+      return null;
+    }
+  }
+
+  // signout function
+  _signOut() async {
+    await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
   }
 
   @override
@@ -47,11 +102,14 @@ class _LoginScreenState extends State<LoginScreen> {
             // left: mq.width * 0.1,
             width: mq.width * 1,
             height: mq.height * 0.09,
-            child: Text('Stay connected with your \nfriends and family',
-            textAlign: TextAlign.center,
-             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),),
+            child: Text(
+              'Stay connected with your \nfriends and family',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            ),
+          ),
 
-            Positioned(
+          Positioned(
             bottom: mq.height * 0.15,
             // left: mq.width * 0.10,
             width: mq.width * 1,
@@ -59,11 +117,18 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.security_rounded, size: 20,color: Color.fromARGB(255, 3, 155, 8),),
-
-                Text(' Secure, Private & Encrypted...', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+                Icon(
+                  Icons.security_rounded,
+                  size: 20,
+                  color: Color.fromARGB(255, 3, 155, 8),
+                ),
+                Text(
+                  ' Secure, Private & Encrypted...',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
               ],
-            ),),
+            ),
+          ),
           // google lgin button
           Positioned(
             bottom: mq.height * 0.10,
@@ -72,12 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
             height: mq.height * 0.07,
             child: ElevatedButton.icon(
               onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => HomeScreen(),
-                  ),
-                );
+                _handleGoogleButtonClick();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,

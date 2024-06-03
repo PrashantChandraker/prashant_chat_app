@@ -64,6 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '504772799902',
     projectId: 'chatbox-8fbe6',
     storageBucket: 'chatbox-8fbe6.appspot.com',
+    androidClientId: '504772799902-tldprvfl62vmtovd7gek34pjjur9k4ng.apps.googleusercontent.com',
+    iosClientId: '504772799902-5ukl6it08mven08bvplnuoqg8191rehp.apps.googleusercontent.com',
     iosBundleId: 'com.example.prashantChatApp',
   );
 
@@ -73,6 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '504772799902',
     projectId: 'chatbox-8fbe6',
     storageBucket: 'chatbox-8fbe6.appspot.com',
+    androidClientId: '504772799902-tldprvfl62vmtovd7gek34pjjur9k4ng.apps.googleusercontent.com',
+    iosClientId: '504772799902-5ukl6it08mven08bvplnuoqg8191rehp.apps.googleusercontent.com',
     iosBundleId: 'com.example.prashantChatApp',
   );
 
@@ -85,4 +89,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'chatbox-8fbe6.appspot.com',
     measurementId: 'G-HLV65TJ2NH',
   );
+
 }

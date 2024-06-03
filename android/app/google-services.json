@@ -12,7 +12,20 @@
           "package_name": "com.example.prashant_chat_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "504772799902-tldprvfl62vmtovd7gek34pjjur9k4ng.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.prashant_chat_app",
+            "certificate_hash": "1abe1197a1233637da9f8a502cf90c8ccbb50077"
+          }
+        },
+        {
+          "client_id": "504772799902-u73t0dsrcv3vagtne4r3uo4ptg1j5i61.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCyUKvQFdOlRoXuYyn33tFEyqn3hlcnK_A"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504772799902-u73t0dsrcv3vagtne4r3uo4ptg1j5i61.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "504772799902-5ukl6it08mven08bvplnuoqg8191rehp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.prashantChatApp"
+              }
+            }
+          ]
         }
       }
     }

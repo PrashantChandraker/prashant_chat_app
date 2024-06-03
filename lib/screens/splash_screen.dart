@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:prashant_chat_app/screens/auth/login_screen.dart';
-import 'package:prashant_chat_app/screens/home_screen.dart';
 
 import '../../main.dart';
 
@@ -14,20 +13,19 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  bool _isAnimate = false;
+  // bool _isAnimate = false;
 
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration(milliseconds: 1500), () {
-
       //exit full screen UI
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
       );
 
-      //navigate to home screen 
+      //navigate to home screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
