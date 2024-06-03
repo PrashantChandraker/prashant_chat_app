@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:prashant_chat_app/screens/auth/login_screen.dart';
+import 'package:prashant_chat_app/screens/home_screen.dart';
 
 import '../../main.dart';
 
@@ -25,13 +27,24 @@ class _SplashScreenState extends State<SplashScreen> {
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
       );
 
-      //navigate to home screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const LoginScreen(),
-        ),
-      );
+      if (FirebaseAuth.instance.currentUser != null) {
+        //to print ur data in debug console
+        debugPrint('\nUser: ${FirebaseAuth.instance.currentUser}');
+        //navigate to home screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const HomeScreen(),
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const LoginScreen(),
+          ),
+        );
+      }
     });
   }
 
