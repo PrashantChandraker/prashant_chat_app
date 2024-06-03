@@ -91,6 +91,15 @@ class _LoginScreenState extends State<LoginScreen> {
         title: Text(
           'Welcome  to  PC Chat',
         ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[Color(0xff5cfaad), Color(0xff5ff1f5)],
+            ),
+          ),
+        ),
       ),
       body: Stack(
         children: [
@@ -139,31 +148,49 @@ class _LoginScreenState extends State<LoginScreen> {
             left: mq.width * 0.05,
             width: mq.width * 0.9,
             height: mq.height * 0.07,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                _handleGoogleButtonClick();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: StadiumBorder(),
-                elevation: 5,
-              ),
-              //google icon
-              icon: Image.asset(
-                'assets/logo/google_logo.png',
-                height: mq.height * 0.05,
+            child: Container(
+              width: double.infinity,
+              height: mq.height * 0.08, // Adjust the height as needed
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black54),
+                gradient: LinearGradient(
+                  colors: <Color>[
+                    Color(0xff5cfaad),
+                    Color(0xff5ff1f5)
+                  ], // Define your gradient colors here
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius:
+                    BorderRadius.circular(30), // Adjust the radius as needed
               ),
 
-              //login with google label
-              label: RichText(
-                text: TextSpan(
-                  style: TextStyle(color: Colors.black, fontSize: 20),
-                  children: [
-                    TextSpan(text: 'Login with '),
-                    TextSpan(
-                        text: 'Google',
-                        style: TextStyle(fontWeight: FontWeight.w500)),
-                  ],
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  _handleGoogleButtonClick();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shape: StadiumBorder(),
+                  elevation: 5,
+                ),
+                //google icon
+                icon: Image.asset(
+                  'assets/logo/google_logo.png',
+                  height: mq.height * 0.05,
+                ),
+
+                //login with google label
+                label: RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    children: [
+                      TextSpan(text: 'Login with '),
+                      TextSpan(
+                          text: 'Google',
+                          style: TextStyle(fontWeight: FontWeight.w500)),
+                    ],
+                  ),
                 ),
               ),
             ),

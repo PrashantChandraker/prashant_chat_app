@@ -35,11 +35,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // textTheme: GoogleFonts.lemonTextTheme(),
         useMaterial3: false,
-        primarySwatch: Colors.blueGrey,
+        // primarySwatch: Colors.blueGrey,
         appBarTheme: AppBarTheme(
           centerTitle: true,
           titleTextStyle: TextStyle(
-              color: Color.fromARGB(255, 255, 255, 255),
+              color: Color.fromARGB(255, 0, 0, 0),
               fontWeight: FontWeight.normal,
               fontSize: 20,
               fontFamily: 'Orbitron',
