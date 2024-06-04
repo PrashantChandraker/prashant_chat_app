@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:prashant_chat_app/models/chat_user.dart';
+import 'package:prashant_chat_app/widgets/chat_user_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +14,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+   List<ChatUser> list = []; // Creating an empty list to store the data from Firestore
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,63 +71,48 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: StreamBuilder(
         // This stream will take data from Firestore collection and it will give data to the ListView builder
-        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        stream: FirebaseFirestore.instance.collection('uses').snapshots(),
         builder: (context, snapshot) {
-          final list =
-              []; // Creating an empty list to store the data from Firestore
+          switch (snapshot.connectionState) {
+            // if the data is loading
+            case ConnectionState.waiting:
+            case ConnectionState.none:
+              return Center(
+                child: CircularProgressIndicator(),
+              );
 
-          if (snapshot.hasData) {
-            // Storing the data from snapshots in "data" to use further
-            final data = snapshot.data?.docs;
-            print(data);
+            // if some or all data is loaded then show it
+            case ConnectionState.active:
+            case ConnectionState.done:
+              
+              // Storing the data from snapshots in "data" to use further
+              final data = snapshot.data?.docs;
 
-            // Check if there is any data
-            if (data!.isEmpty) {
-              return Center(child: Text('No data found'));
-            } else {
-              // Loop through the data and add to list
-              for (var i in data) {
-                debugPrint('\nData: ${jsonEncode(i.data())}'); // To print in debug console
+              list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
 
-                // Add the data to the list as a map
-                list.add({
-                  'name': i.data()['name'],
-                  'about': i.data()['about'],
-                });
-              }
-
-              return ListView.builder(
+             if(list.isNotEmpty){
+               return ListView.builder(
                 padding: EdgeInsets.only(top: 3),
                 itemCount: list.length,
                 physics: BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   // Retrieve the name and about for the current user
-                  final user = list[index];
-                  final name = user['name'];
-                  final about = user['about'];
+                  // final user = list[index];
+                  // final name = user['name'];
+                  // final about = user['about'];
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Name: $name'),
-                      Text('About: $about'),
-                      SizedBox(height: 6),
-                    ],
-                  ); // It will print on screen the name and about
+
+                  return ChatUserCard(user: list[index]);
+                  // return Text(
+                  //     'Name: ${list[index]}'); // It will print on screen the name and about
                 },
               );
-            }
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Something went wrong'));
-          } else {
-            return Center(child: CircularProgressIndicator());
+             }else{
+              return Center(child: Text('No Data found!', style: TextStyle(fontSize: 20),));
+             }
           }
         },
       ),
     );
-  }
-
-  Text nodata() {
-    return Text('No data found');
   }
 }
