@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // for showing progress bar
     Dialogs.showProgressBar(context);
 
-    _signInWithGoogle().then((user) {
+    _signInWithGoogle().then((user) async {
       //for hiding progress bar
       Navigator.pop(context);
       //debug console printing
@@ -41,12 +41,27 @@ class _LoginScreenState extends State<LoginScreen> {
           '\nUser : ${(user.user)}',
         );
         print('\nUser Additional Information : ${user.additionalUserInfo}');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HomeScreen(),
-          ),
-        );
+
+        // user dont exists already then go to home screen with existing user
+        if ((await APIs.userExists())) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => HomeScreen(),
+            ),
+          );
+        } 
+        // user dont exists already then go to home screen after creting user
+        else {
+          await APIs.createUser().then((value) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => HomeScreen(),
+              ),
+            );
+          });
+        }
       }
     });
   }
