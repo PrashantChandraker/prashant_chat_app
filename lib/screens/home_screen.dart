@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
             } else {
               // Loop through the data and add to list
               for (var i in data) {
-                debugPrint('\nData: ${i.data()}'); // To print in debug console
+                debugPrint('\nData: ${jsonEncode(i.data())}'); // To print in debug console
 
                 // Add the data to the list as a map
                 list.add({
