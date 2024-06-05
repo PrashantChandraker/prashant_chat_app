@@ -1,6 +1,4 @@
 
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -18,6 +16,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
    List<ChatUser> list = []; // Creating an empty list to store the data from Firestore
+
+   @override
+  void initState() {
+    super.initState();
+    APIs.getSelfInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
               )),
           IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_)=> ProfileScreen(user: list[0],)));
+                Navigator.push(context, MaterialPageRoute(builder: (_)=> ProfileScreen(user: APIs.me,)));
               },
               icon: Icon(
                 Icons.more_vert,
@@ -76,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: StreamBuilder(
         // This stream will take data from Firestore collection and it will give data to the ListView builder
-        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        stream: APIs.getAllUsers(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             // if the data is loading
