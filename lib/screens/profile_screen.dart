@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:prashant_chat_app/api/apis.dart';
+import 'package:prashant_chat_app/helpers/dialogs.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
 import 'package:prashant_chat_app/screens/auth/login_screen.dart';
 
@@ -27,11 +29,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         actions: [
           IconButton(
+            splashColor: Colors.red,
+            tooltip: 'Logout',
+            autofocus: true,
             onPressed: () async {
-              // trial to check logout function is working or not
-              await APIs.auth.signOut();
-              await GoogleSignIn().signOut();
-              setState(() {});
+              // for showing progress dialog
+              Dialogs.showProgressBar(context);
+
+              // sign out from app
+              await APIs.auth.signOut().then((value) async {
+                await GoogleSignIn().signOut().then((value) {
+                  // for hiding progress dialog
+                  Navigator.pop(context);
+
+                  // for moving to home screen
+                  Navigator.pop(context);
+
+                  // replacing home screen with login screen
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (_) => LoginScreen()));
+                });
+              });
+
+              // setState(() {});
               Navigator.pushReplacement(
                   context, MaterialPageRoute(builder: (_) => LoginScreen()));
             },
@@ -72,19 +92,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: mq.width,
               height: mq.height * 0.03,
             ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(
-                  mq.height * 0.1), // passing the half height
-              child: CachedNetworkImage(
-                width: mq.height * 0.15,
-                height: mq.height * 0.15,
-                fit: BoxFit.contain,
-                imageUrl: widget.user.image,
-                // placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => CircleAvatar(
-                  child: Icon(CupertinoIcons.person),
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                      mq.height * 0.1), // passing the half height
+                  child: CachedNetworkImage(
+                    width: mq.height * 0.15,
+                    height: mq.height * 0.15,
+                    fit: BoxFit.contain,
+                    imageUrl: widget.user.image,
+                    // placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => CircleAvatar(
+                      child: Icon(CupertinoIcons.person),
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                  bottom: 0,
+                  left: 70,
+                  child: MaterialButton(
+                    elevation: 2,
+                    shape: CircleBorder(),
+                    color: Colors.amber,
+                    onPressed: () {},
+                    child: Icon(
+                      Icons.edit,
+                      size: 20,
+                    ),
+                  ),
+                )
+              ],
             ),
             SizedBox(
               height: mq.height * 0.03,
