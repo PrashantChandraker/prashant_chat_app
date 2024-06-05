@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:prashant_chat_app/api/apis.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
+import 'package:prashant_chat_app/screens/profile_screen.dart';
 import 'package:prashant_chat_app/widgets/chat_user_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,7 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.black,
               )),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_)=> ProfileScreen(user: list[0],)));
+              },
               icon: Icon(
                 Icons.more_vert,
                 color: Colors.black,

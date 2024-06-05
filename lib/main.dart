@@ -35,8 +35,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // textTheme: GoogleFonts.lemonTextTheme(),
         useMaterial3: false,
-        // primarySwatch: Colors.blueGrey,
+         primarySwatch:Colors.blueGrey,
         appBarTheme: AppBarTheme(
+         iconTheme: IconThemeData(color: Colors.black),
           centerTitle: true,
           titleTextStyle: TextStyle(
               color: Color.fromARGB(255, 0, 0, 0),

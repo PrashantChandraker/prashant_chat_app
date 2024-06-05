@@ -29,7 +29,7 @@ class APIs {
       // getting the data names from debug console which we are getting from print method in "login.dart"
         image: user.photoURL.toString(),
         name: user.displayName.toString(),
-        about: "Hey i am usin PC Chat",
+        about: "Hey i am using PC Chat",
         createdAt: time,
         isOnline: false,
         lastActive: time,
