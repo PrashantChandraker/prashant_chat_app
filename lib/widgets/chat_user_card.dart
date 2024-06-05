@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../main.dart';
 
@@ -16,7 +17,8 @@ class _ChatUserCardState extends State<ChatUserCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: mq.width*0.02, vertical: mq.height*0.005),
+      margin: EdgeInsets.symmetric(
+          horizontal: mq.width * 0.02, vertical: mq.height * 0.005),
       color: Colors.white,
       shadowColor: Colors.blueGrey,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -25,19 +27,40 @@ class _ChatUserCardState extends State<ChatUserCard> {
         onTap: () {},
         child: ListTile(
           // user profile picture
-          leading: CircleAvatar(child: Icon(CupertinoIcons.person),),
-         
+          // leading: CircleAvatar(child: Icon(CupertinoIcons.person),),
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(mq.height*0.3), // passing the half height 
+            child: CachedNetworkImage(
+              width: mq.height * 0.055,
+              height: mq.height * 0.055,
+              imageUrl: widget.user.image,
+              // placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => CircleAvatar(
+                child: Icon(CupertinoIcons.person),
+              ),
+            ),
+          ),
           // user name
-          title: Text(widget.user.name, maxLines: 1,),
-         
+          title: Text(
+            widget.user.name,
+            maxLines: 1,
+          ),
+
           // last mesage time
-          subtitle: Text(widget.user.about, maxLines: 1,),
+          subtitle: Text(
+            widget.user.about,
+            maxLines: 1,
+          ),
 
           //last message time
-          trailing: Text(
-            '12:00 PM',
-            style: TextStyle(color: Colors.black54),
+          trailing: Container(
+            width: 10, height: 10,
+            decoration: BoxDecoration(color: Colors.green, shape: BoxShape.circle),
           ),
+          // trailing: Text(
+          //   '12:00 PM',
+          //   style: TextStyle(color: Colors.black54),
+          // ),
         ),
       ),
     );
