@@ -250,6 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           setState(() {
                             _image=image.path;
                           });
+                           APIs.updateProfilePicture(File(_image!));
 
                           // for hiding bottom sheet
                           Navigator.pop(context);
@@ -274,6 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           setState(() {
                             _image=image.path;
                           });
+                          APIs.updateProfilePicture(File(_image!));
 
                           // for hiding bottom sheet
                           Navigator.pop(context);

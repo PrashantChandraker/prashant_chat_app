@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,7 +13,6 @@ class APIs {
   // for accesing cloud firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  
   // for accesing cloud firestore database
   static FirebaseStorage storage = FirebaseStorage.instance;
 
@@ -29,11 +30,10 @@ class APIs {
   // for checking if user exsits or not
   static Future<void> getSelfInfo() async {
     await firestore.collection('users').doc(user.uid).get().then((user) async {
-
       if (user.exists) {
-        me=ChatUser.fromJson(user.data()!);
+        me = ChatUser.fromJson(user.data()!);
         debugPrint('\nMY Data: ${user.data()}');
-      }else{
+      } else {
         await createUser().then((value) => getSelfInfo());
       }
     });
@@ -68,13 +68,40 @@ class APIs {
         .snapshots();
   }
 
- // for updating user information
+  // for updating user information
   static Future<void> updateUserInfo() async {
     // we can use set() also instead of update() but set method used when there is no already value
-     await firestore.collection('users').doc(user.uid).update({
-      'name' : me.name,
-      'about' : me.about
-     });
+    await firestore
+        .collection('users')
+        .doc(user.uid)
+        .update({'name': me.name, 'about': me.about});
   }
 
+  // update profile picture of user
+  static Future<void> updateProfilePicture(File file) async {
+    
+    //getting image file exension
+    final ext =
+        file.path.split('.').last; // storing last extension after dot in "ext"
+    debugPrint('\nExtension: $ext');
+    //defining path to store the uploded image
+    //storage file ref with path
+    final ref = storage.ref().child(
+        'Profile_pictures/${user.uid}.$ext'); // using user.uid to store unique images
+    // pushig the file to the firebase
+    
+    // uploading image 
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((p0) {
+      debugPrint(
+          '\n Data Transfered: ${p0.bytesTransferred / 1000} kb'); // printing the transfered data in ad  of bytes
+    });
+
+    //updating image in firestore databse
+    me.image = await ref.getDownloadURL();  // storng the download url in me.image
+    await firestore.collection('users').doc(user.uid).update({
+      'image': me.image,
+    });
+  }
 }
