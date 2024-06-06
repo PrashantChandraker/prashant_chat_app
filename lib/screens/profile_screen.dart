@@ -24,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       // for hiding keyboard when tap other place
-      onTap: ()=> FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -39,22 +39,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () async {
                 // for showing progress dialog
                 Dialogs.showProgressBar(context);
-      
+
                 // sign out from app
                 await APIs.auth.signOut().then((value) async {
                   await GoogleSignIn().signOut().then((value) {
                     // for hiding progress dialog
                     Navigator.pop(context);
-      
+
                     // for moving to home screen
                     Navigator.pop(context);
-      
+
                     // replacing home screen with login screen
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (_) => LoginScreen()));
                   });
                 });
-      
+
                 // setState(() {});
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (_) => LoginScreen()));
@@ -79,10 +79,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           elevation: 10,
           backgroundColor: Colors.amber,
           onPressed: () {
-            if(_formkey.currentState!.validate()){
+            if (_formkey.currentState!.validate()) {
               _formkey.currentState!.save();
               APIs.updateUserInfo().then((value) {
-                Dialogs.showSnacbar(context, 'Profile updated Succesfully', Colors.green);
+                Dialogs.showSnacbar(
+                    context, 'Profile updated Succesfully', Colors.green);
               });
             }
           },
@@ -131,7 +132,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           elevation: 2,
                           shape: CircleBorder(),
                           color: Colors.amber,
-                          onPressed: () {},
+                          onPressed: () {
+                            _showBottomSheet();
+                          },
                           child: Icon(
                             Icons.edit,
                             size: 20,
@@ -151,8 +154,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: mq.height * 0.03,
                   ),
                   TextFormField(
-                    onSaved: (val)=>APIs.me.name = val ?? '', // we will store the name or empty string in "val"
-                    validator: (val)=>val != null && val.isNotEmpty ? null : 'Required Feild',
+                    onSaved: (val) => APIs.me.name = val ??
+                        '', // we will store the name or empty string in "val"
+                    validator: (val) =>
+                        val != null && val.isNotEmpty ? null : 'Required Feild',
                     initialValue: widget.user.name,
                     decoration: InputDecoration(
                         prefixIcon: Icon(CupertinoIcons.person),
@@ -166,8 +171,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: mq.height * 0.02,
                   ),
                   TextFormField(
-                    onSaved: (val)=>APIs.me.about = val ?? '', // we will store the name or empty string in "val"
-                    validator: (val)=>val != null && val.isNotEmpty ? null : 'Required Feild',
+                    onSaved: (val) => APIs.me.about = val ??
+                        '', // we will store the name or empty string in "val"
+                    validator: (val) =>
+                        val != null && val.isNotEmpty ? null : 'Required Feild',
                     initialValue: widget.user.about,
                     decoration: InputDecoration(
                         prefixIcon: Icon(CupertinoIcons.info_circle),
@@ -187,5 +194,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+// bottom sheetfor picking profile picture
+  void _showBottomSheet() {
+    showModalBottomSheet(
+         backgroundColor: Color.fromRGBO(92,249,176,255),
+        context: context,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(500),
+        )),
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 20, right: 30, bottom: 80),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          // backgroundColor: Colors.transparent,
+                          shape: CircleBorder(),
+                          fixedSize: Size(mq.width * 0.25, mq.height * 0.1)),
+                      onPressed: () {},
+                      child: Image.asset('assets/icons/camera.png'),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          //  backgroundColor: Colors.transparent,
+                          shape: CircleBorder(),
+                          fixedSize: Size(mq.width * 0.25, mq.height * 0.1)),
+                      onPressed: () {},
+                      child: Image.asset('assets/icons/gallery.png'),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        });
   }
 }
