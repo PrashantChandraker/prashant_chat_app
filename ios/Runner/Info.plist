@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!--permission for picking images from gallery or taking image from camera-->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<String>App requires access to the photo library for picking images.</String>
+	<key>NSCameraUsageDescription</key>
+	<String>App requires access to the camera to pick images.</String>
+	
 </dict>
 </plist>

@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:prashant_chat_app/api/apis.dart';
 import 'package:prashant_chat_app/helpers/dialogs.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
@@ -20,6 +23,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formkey = GlobalKey<FormState>();
+  String ? _image;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -108,15 +113,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: mq.width,
                     height: mq.height * 0.03,
                   ),
+                  //user profile picture
                   Stack(
                     children: [
+                      //profile picture
+                      _image !=null ?  
+                      //local image
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            mq.height * 0.1), // passing the half height
+                        child: Image.file(
+                          File(_image!),
+                          width: mq.height * 0.20,
+                          height: mq.height * 0.20,
+                          fit: BoxFit.cover,
+                         
+                        ),
+                      ) :
+
+                      //image from server
                       ClipRRect(
                         borderRadius: BorderRadius.circular(
                             mq.height * 0.1), // passing the half height
                         child: CachedNetworkImage(
                           width: mq.height * 0.20,
                           height: mq.height * 0.20,
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                           imageUrl: widget.user.image,
                           // placeholder: (context, url) => CircularProgressIndicator(),
                           errorWidget: (context, url, error) => CircleAvatar(
@@ -199,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 // bottom sheetfor picking profile picture
   void _showBottomSheet() {
     showModalBottomSheet(
-         backgroundColor: Color.fromRGBO(92,249,176,255),
+        backgroundColor: Color.fromRGBO(92, 249, 176, 255),
         context: context,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -219,7 +241,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // backgroundColor: Colors.transparent,
                           shape: CircleBorder(),
                           fixedSize: Size(mq.width * 0.25, mq.height * 0.1)),
-                      onPressed: () {},
+                     onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        // Pick an image.
+                        final XFile? image = await picker.pickImage(source: ImageSource.camera);
+                        if(image!=null){
+                          debugPrint('Image path: ${image.path}');
+                          setState(() {
+                            _image=image.path;
+                          });
+
+                          // for hiding bottom sheet
+                          Navigator.pop(context);
+                        }
+                      },
                       child: Image.asset('assets/icons/camera.png'),
                     ),
                     SizedBox(
@@ -230,7 +265,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           //  backgroundColor: Colors.transparent,
                           shape: CircleBorder(),
                           fixedSize: Size(mq.width * 0.25, mq.height * 0.1)),
-                      onPressed: () {},
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        // Pick an image.
+                        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                        if(image!=null){
+                          debugPrint('Image path: ${image.path} -- MimeType: ${image.mimeType}');
+                          setState(() {
+                            _image=image.path;
+                          });
+
+                          // for hiding bottom sheet
+                          Navigator.pop(context);
+                        }
+                      },
                       child: Image.asset('assets/icons/gallery.png'),
                     ),
                   ],
