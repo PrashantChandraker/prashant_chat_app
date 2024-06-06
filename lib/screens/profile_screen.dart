@@ -19,6 +19,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final _formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -73,10 +74,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
+        //update button
         floatingActionButton: FloatingActionButton.extended(
           elevation: 10,
           backgroundColor: Colors.amber,
-          onPressed: () {},
+          onPressed: () {
+            if(_formkey.currentState!.validate()){
+              _formkey.currentState!.save();
+              APIs.updateUserInfo().then((value) {
+                Dialogs.showSnacbar(context, 'Profile updated Succesfully');
+              });
+            }
+          },
           icon: Icon(
             Icons.edit,
             color: Colors.black,
@@ -87,83 +96,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: TextStyle(color: Colors.black, fontSize: 18),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
-          child: Column(
-            children: [
-              SizedBox(
-                width: mq.width,
-                height: mq.height * 0.03,
-              ),
-              Stack(
+        body: Form(
+          key: _formkey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        mq.height * 0.1), // passing the half height
-                    child: CachedNetworkImage(
-                      width: mq.height * 0.15,
-                      height: mq.height * 0.15,
-                      fit: BoxFit.contain,
-                      imageUrl: widget.user.image,
-                      // placeholder: (context, url) => CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => CircleAvatar(
-                        child: Icon(CupertinoIcons.person),
-                      ),
-                    ),
+                  SizedBox(
+                    width: mq.width,
+                    height: mq.height * 0.03,
                   ),
-                  Positioned(
-                    bottom: 0,
-                    left: 70,
-                    child: MaterialButton(
-                      elevation: 2,
-                      shape: CircleBorder(),
-                      color: Colors.amber,
-                      onPressed: () {},
-                      child: Icon(
-                        Icons.edit,
-                        size: 20,
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            mq.height * 0.1), // passing the half height
+                        child: CachedNetworkImage(
+                          width: mq.height * 0.20,
+                          height: mq.height * 0.20,
+                          fit: BoxFit.contain,
+                          imageUrl: widget.user.image,
+                          // placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => CircleAvatar(
+                            child: Icon(CupertinoIcons.person),
+                          ),
+                        ),
                       ),
-                    ),
-                  )
+                      Positioned(
+                        bottom: 0,
+                        left: 90,
+                        // right: 0,
+                        child: MaterialButton(
+                          elevation: 2,
+                          shape: CircleBorder(),
+                          color: Colors.amber,
+                          onPressed: () {},
+                          child: Icon(
+                            Icons.edit,
+                            size: 20,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: mq.height * 0.03,
+                  ),
+                  Text(
+                    widget.user.email,
+                    style: TextStyle(color: Colors.black, fontSize: 17),
+                  ),
+                  SizedBox(
+                    height: mq.height * 0.03,
+                  ),
+                  TextFormField(
+                    onSaved: (val)=>APIs.me.name = val ?? '', // we will store the name or empty string in "val"
+                    validator: (val)=>val != null && val.isNotEmpty ? null : 'Required Feild',
+                    initialValue: widget.user.name,
+                    decoration: InputDecoration(
+                        prefixIcon: Icon(CupertinoIcons.person),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        hintText: 'eg. Pashant Chandraker',
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        labelText: 'Name'),
+                  ),
+                  SizedBox(
+                    height: mq.height * 0.02,
+                  ),
+                  TextFormField(
+                    onSaved: (val)=>APIs.me.about = val ?? '', // we will store the name or empty string in "val"
+                    validator: (val)=>val != null && val.isNotEmpty ? null : 'Required Feild',
+                    initialValue: widget.user.about,
+                    decoration: InputDecoration(
+                        prefixIcon: Icon(CupertinoIcons.info_circle),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        hintText: 'eg. call me anti-social but dont call me',
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        labelText: 'Status'),
+                  ),
+                  SizedBox(
+                    height: mq.height * 0.03,
+                  ),
                 ],
               ),
-              SizedBox(
-                height: mq.height * 0.03,
-              ),
-              Text(
-                widget.user.email,
-                style: TextStyle(color: Colors.black, fontSize: 17),
-              ),
-              SizedBox(
-                height: mq.height * 0.03,
-              ),
-              TextFormField(
-                initialValue: widget.user.name,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(CupertinoIcons.person),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    hintText: 'eg. Pashant Chandraker',
-                    hintStyle: TextStyle(color: Colors.grey.shade500),
-                    labelText: 'Name'),
-              ),
-              SizedBox(
-                height: mq.height * 0.02,
-              ),
-              TextFormField(
-                initialValue: widget.user.about,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(CupertinoIcons.info_circle),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    hintText: 'eg. call me anti-social but dont call me',
-                    hintStyle: TextStyle(color: Colors.grey.shade500),
-                    labelText: 'Status'),
-              ),
-              SizedBox(
-                height: mq.height * 0.03,
-              ),
-            ],
+            ),
           ),
         ),
       ),

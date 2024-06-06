@@ -62,4 +62,14 @@ class APIs {
         .where('id', isNotEqualTo: user.uid)
         .snapshots();
   }
+
+ // for updating user information
+  static Future<void> updateUserInfo() async {
+    // we can use set() also instead of update() but set method used when there is no already value
+     await firestore.collection('users').doc(user.uid).update({
+      'name' : me.name,
+      'about' : me.about
+     });
+  }
+
 }
