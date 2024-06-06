@@ -82,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if(_formkey.currentState!.validate()){
               _formkey.currentState!.save();
               APIs.updateUserInfo().then((value) {
-                Dialogs.showSnacbar(context, 'Profile updated Succesfully');
+                Dialogs.showSnacbar(context, 'Profile updated Succesfully', Colors.green);
               });
             }
           },

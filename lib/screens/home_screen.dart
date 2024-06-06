@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -15,9 +14,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-   List<ChatUser> list = []; // Creating an empty list to store the data from Firestore
+  List<ChatUser> _list =
+      []; // Creating an empty list to store the data from Firestore= store users
 
-   @override
+  // for toring searched items
+  final List<ChatUser> _searchList = [];
+
+// for storing search status
+  bool _isSearching = false;
+  @override
   void initState() {
     super.initState();
     APIs.getSelfInfo();
@@ -35,19 +40,54 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           color: Colors.black,
         ),
-        title: Text(
-          'PC  Chat',
-        ),
+        title: _isSearching
+            ? TextField(
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Name, Email...',
+                ),
+                autofocus: true,
+                style: TextStyle(fontSize: 18, letterSpacing: 1.5),
+                // when search text changes than update search list
+                onChanged: (val) {
+                  //seach logic
+                  _searchList.clear();
+
+                  for (var i in _list) {
+                    if (i.name.toLowerCase().contains(val.toLowerCase()) ||
+                        i.email.toLowerCase().contains(val.toLowerCase())) {
+                      _searchList.add(i);
+                    }
+                    setState(() {
+                      _searchList;
+                    });
+                  }
+                },
+              )
+            : Text(
+                'PC  Chat',
+              ),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  _isSearching = !_isSearching;
+                });
+              },
               icon: Icon(
-                Icons.search,
+                _isSearching ? CupertinoIcons.clear_circled : Icons.search,
                 color: Colors.black,
               )),
           IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_)=> ProfileScreen(user: APIs.me,)));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ProfileScreen(
+                      user: APIs.me,
+                    ),
+                  ),
+                );
               },
               icon: Icon(
                 Icons.more_vert,
@@ -93,32 +133,37 @@ class _HomeScreenState extends State<HomeScreen> {
             // if some or all data is loaded then show it
             case ConnectionState.active:
             case ConnectionState.done:
-              
+
               // Storing the data from snapshots in "data" to use further
               final data = snapshot.data?.docs;
 
-              list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+              _list =
+                  data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
 
-             if(list.isNotEmpty){
-               return ListView.builder(
-                padding: EdgeInsets.only(top: 3),
-                itemCount: list.length,
-                physics: BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  // Retrieve the name and about for the current user
-                  // final user = list[index];
-                  // final name = user['name'];
-                  // final about = user['about'];
+              if (_list.isNotEmpty) {
+                return ListView.builder(
+                  padding: EdgeInsets.only(top: 3),
+                  itemCount: _isSearching ? _searchList.length : _list.length,
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    // Retrieve the name and about for the current user
+                    // final user = list[index];
+                    // final name = user['name'];
+                    // final about = user['about'];
 
-
-                  return ChatUserCard(user: list[index]);
-                  // return Text(
-                  //     'Name: ${list[index]}'); // It will print on screen the name and about
-                },
-              );
-             }else{
-              return Center(child: Text('No Data found!', style: TextStyle(fontSize: 20),));
-             }
+                    return ChatUserCard(
+                        user: _isSearching ? _searchList[index] : _list[index]);
+                    // return Text(
+                    //     'Name: ${list[index]}'); // It will print on screen the name and about
+                  },
+                );
+              } else {
+                return Center(
+                    child: Text(
+                  'No Data found!',
+                  style: TextStyle(fontSize: 20),
+                ));
+              }
           }
         },
       ),

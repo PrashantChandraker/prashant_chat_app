@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return await APIs.auth.signInWithCredential(credential);
     } catch (e) {
       print('\n_signInWithGoogle : $e');
-      Dialogs.showSnacbar(context, 'No Internet Connection');
+      Dialogs.showSnacbar(context, 'No Internet Connection', Colors.red);
       return null;
     }
   }
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         children: [
           AnimatedPositioned(
-            bottom: _isAnimate ? mq.height * 0.5 : -mq.width * .5,
+            top: _isAnimate ? mq.height * 0.2 : -mq.width * .5,
             left: mq.width * 0.25,
             width: mq.width * 0.5,
             duration: Duration(seconds: 1),
