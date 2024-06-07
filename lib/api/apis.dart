@@ -108,12 +108,19 @@ class APIs {
 
 /*************************** Chat Screen related APIs ***************************/
 
+
+//useful for getting unique conversation id
+static String getConversationID(String id)=> user.uid.hashCode <= id.hashCode // <= symbol will compare both uid and id hashcode
+? '${user.uid}_$id' : '${id}_${user.uid}';
+
+
 //for getting all the users from firestore database
- static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
+ static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(ChatUser user) {
     return firestore
-        .collection('messages')
-       
+        .collection('chats/${getConversationID(user.id)}/messages/')
         .snapshots();
   }
+
+  // chats (collection)  --> conversation_id (doc) --> messages (collection)  --> message (doc)
 
 }
