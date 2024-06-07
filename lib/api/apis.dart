@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:prashant_chat_app/helpers/message.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
 
 class APIs {
@@ -79,7 +80,6 @@ class APIs {
 
   // update profile picture of user
   static Future<void> updateProfilePicture(File file) async {
-    
     //getting image file exension
     final ext =
         file.path.split('.').last; // storing last extension after dot in "ext"
@@ -89,8 +89,8 @@ class APIs {
     final ref = storage.ref().child(
         'Profile_pictures/${user.uid}.$ext'); // using user.uid to store unique images
     // pushig the file to the firebase
-    
-    // uploading image 
+
+    // uploading image
     await ref
         .putFile(file, SettableMetadata(contentType: 'image/$ext'))
         .then((p0) {
@@ -99,28 +99,41 @@ class APIs {
     });
 
     //updating image in firestore databse
-    me.image = await ref.getDownloadURL();  // storng the download url in me.image
+    me.image =
+        await ref.getDownloadURL(); // storng the download url in me.image
     await firestore.collection('users').doc(user.uid).update({
       'image': me.image,
     });
   }
 
-
 /*************************** Chat Screen related APIs ***************************/
 
+  // chats (collection)  --> conversation_id (doc) --> messages (collection)  --> message (doc)
 
 //useful for getting unique conversation id
-static String getConversationID(String id)=> user.uid.hashCode <= id.hashCode // <= symbol will compare both uid and id hashcode
-? '${user.uid}_$id' : '${id}_${user.uid}';
-
+  static String getConversationID(String id) => user.uid.hashCode <=
+          id.hashCode // <= symbol will compare both uid and id hashcode
+      ? '${user.uid}_$id'
+      : '${id}_${user.uid}';
 
 //for getting all the users from firestore database
- static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(ChatUser user) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
+      ChatUser user) {
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages/')
         .snapshots();
   }
 
-  // chats (collection)  --> conversation_id (doc) --> messages (collection)  --> message (doc)
+  // for sending message
+  static Future<void> sendMessage(ChatUser chatuser, String msg) async{
+    
+    //message sending time (also used as id)
+    final time = DateTime.now().millisecondsSinceEpoch.toString();
+    
+    // message to send
+    final Message message = Message(formId: user.uid, msg: msg, toId: chatuser.id, read: '', type: Type.text, sent: time);
 
+    final ref = firestore.collection('chats/${getConversationID(chatuser.id)}/messages/');
+    await ref.doc(time).set(message.toJson());
+  }
 }

@@ -41,8 +41,7 @@ class _MessagecardState extends State<Messagecard> {
             child: Padding(
               padding: EdgeInsets.all(mq.width * 0.03),
               child: Text(
-                widget.message.msg +
-                    ' I am prasahnt chandraker what is your name',
+                widget.message.msg,
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -110,8 +109,7 @@ class _MessagecardState extends State<Messagecard> {
             child: Padding(
               padding: EdgeInsets.all(mq.width * 0.03),
               child: Text(
-                widget.message.msg +
-                    ' I am prashant chandraker what is your name',
+                widget.message.msg,
                 style: TextStyle(
                   fontSize: 16,
                 ),

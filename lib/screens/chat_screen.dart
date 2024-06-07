@@ -18,18 +18,18 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   // for storing all messages
-  List<Message> _list=[];
+  List<Message> _list = [];
+  // for handling message text changes
+  final _textcontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       // for hiding keyboard when touch anywhere
-     onTap: () => FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Color.fromARGB(255, 227, 244, 246),
-
           appBar: AppBar(
             automaticallyImplyLeading: false,
             flexibleSpace: _appbar(),
@@ -39,35 +39,37 @@ class _ChatScreenState extends State<ChatScreen> {
               Expanded(
                 child: StreamBuilder(
                   // This stream will take data from Firestore collection and it will give data to the ListView builder
-                  stream: APIs.getAllMessages(),
+                  stream: APIs.getAllMessages(widget.user),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       // if the data is loading
                       case ConnectionState.waiting:
                       case ConnectionState.none:
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                
+                        return Center(
+                          child: SizedBox(),
+                        );
+
                       // if some or all data is loaded then show it
                       case ConnectionState.active:
                       case ConnectionState.done:
-                
+
                         // Storing the data from snapshots in "data" to use further
-                
+
                         final data = snapshot.data?.docs;
 
                         //print method for gtting the data in json format and then we convert to dart format
-                        debugPrint('\nData: ${jsonEncode(data![0].data())}');
-                        // _list =
-                        //     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
-                        //         [];
-                
-                        _list.clear(); // to clear the older 
-                        _list.add(Message(formId: APIs.user.uid, msg: 'hii', toId: 'Maine bheja', read: '', type: Type.text, sent: '12:00 AM'));
-                        
-                        _list.add(Message(formId: 'Maine bheja', msg: 'Hello', toId: APIs.user.uid, read: '', type: Type.text, sent: '12:05 AM'));
-                
+                        // debugPrint('\nData: ${jsonEncode(data![0].data())}');
+                        _list = data
+                                ?.map((e) => Message.fromJson(e.data()))
+                                .toList() ??
+                            [];
+
+                        //for dummy data
+                        // _list.clear(); // to clear the older
+                        // _list.add(Message(formId: APIs.user.uid, msg: 'hii', toId: 'Maine bheja', read: '', type: Type.text, sent: '12:00 AM'));
+
+                        // _list.add(Message(formId: 'Maine bheja', msg: 'Hello', toId: APIs.user.uid, read: '', type: Type.text, sent: '12:05 AM'));
+
                         if (_list.isNotEmpty) {
                           return ListView.builder(
                             padding: EdgeInsets.only(top: 3),
@@ -78,8 +80,10 @@ class _ChatScreenState extends State<ChatScreen> {
                               // final user = list[index];
                               // final name = user['name'];
                               // final about = user['about'];
-                
-                              return Messagecard(message: _list[index],);// It will print on screen the name and about
+
+                              return Messagecard(
+                                message: _list[index],
+                              ); // It will print on screen the name and about
                             },
                           );
                         } else {
@@ -193,9 +197,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   Expanded(
                       child: TextField(
-                        // scrollPhysics: AlwaysScrollableScrollPhysics(),
+                        controller: _textcontroller,
+                    // scrollPhysics: AlwaysScrollableScrollPhysics(),
                     keyboardType: TextInputType.multiline,
-                     maxLines: null,
+                    maxLines: null,
                     decoration: InputDecoration(
                         hintText: 'Type something...',
                         hintStyle: TextStyle(color: Colors.black54),
@@ -226,7 +231,12 @@ class _ChatScreenState extends State<ChatScreen> {
           MaterialButton(
             minWidth: 0,
             padding: EdgeInsets.only(top: 10, left: 10, right: 5, bottom: 10),
-            onPressed: () {},
+            onPressed: () {
+              if(_textcontroller.text.isNotEmpty){
+                APIs.sendMessage(widget.user, _textcontroller.text);
+                _textcontroller.text='';
+              }
+            },
             child: Icon(
               Icons.send_rounded,
               color: Colors.white,
