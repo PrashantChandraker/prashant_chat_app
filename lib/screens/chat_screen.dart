@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:prashant_chat_app/main.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
 
@@ -16,14 +15,72 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          flexibleSpace: _appbar(),
-        ),
-        body: Column(
-          children: [_chatInput()],
+    return GestureDetector(
+      // for hiding keyboard when touch anywhere
+     onTap: () => FocusScope.of(context).unfocus(),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            flexibleSpace: _appbar(),
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: StreamBuilder(
+                  // This stream will take data from Firestore collection and it will give data to the ListView builder
+                  stream: null,
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      // if the data is loading
+                      case ConnectionState.waiting:
+                      case ConnectionState.none:
+                      // return Center(
+                      //   child: CircularProgressIndicator(),
+                      // );
+                
+                      // if some or all data is loaded then show it
+                      case ConnectionState.active:
+                      case ConnectionState.done:
+                
+                        // Storing the data from snapshots in "data" to use further
+                
+                        // final data = snapshot.data?.docs;
+                        // _list =
+                        //     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
+                        //         [];
+                
+                        final _list = [];
+                
+                        if (_list.isNotEmpty) {
+                          return ListView.builder(
+                            padding: EdgeInsets.only(top: 3),
+                            itemCount: _list.length,
+                            physics: BouncingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              // Retrieve the name and about for the current user
+                              // final user = list[index];
+                              // final name = user['name'];
+                              // final about = user['about'];
+                
+                              return Text(
+                                  'Message: ${_list[index]}'); // It will print on screen the name and about
+                            },
+                          );
+                        } else {
+                          return Center(
+                              child: Text(
+                            'Say Hii...👋',
+                            style: TextStyle(fontSize: 20),
+                          ));
+                        }
+                    }
+                  },
+                ),
+              ),
+              _chatInput()
+            ],
+          ),
         ),
       ),
     );
@@ -100,14 +157,14 @@ class _ChatScreenState extends State<ChatScreen> {
   // bottom chat input feild
   Widget _chatInput() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child: Row(
         children: [
           Expanded(
             child: Card(
               elevation: 4,
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
               child: Row(
                 children: [
                   //emoji button
@@ -118,11 +175,12 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: Colors.lightBlue,
                     ),
                   ),
-      
+
                   Expanded(
                       child: TextField(
+                        // scrollPhysics: AlwaysScrollableScrollPhysics(),
                     keyboardType: TextInputType.multiline,
-                    maxLines: null,
+                     maxLines: null,
                     decoration: InputDecoration(
                         hintText: 'Type something...',
                         hintStyle: TextStyle(color: Colors.black54),
@@ -148,14 +206,15 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
-      
+
           //send messsage button
           MaterialButton(
             minWidth: 0,
             padding: EdgeInsets.only(top: 10, left: 10, right: 5, bottom: 10),
             onPressed: () {},
             child: Icon(
-              Icons.send_rounded, color: Colors.white,
+              Icons.send_rounded,
+              color: Colors.white,
             ),
             color: Colors.green,
             shape: CircleBorder(),
