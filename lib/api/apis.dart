@@ -104,4 +104,16 @@ class APIs {
       'image': me.image,
     });
   }
+
+
+/*************************** Chat Screen related APIs ***************************/
+
+//for getting all the users from firestore database
+ static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
+    return firestore
+        .collection('messages')
+       
+        .snapshots();
+  }
+
 }

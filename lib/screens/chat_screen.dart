@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:prashant_chat_app/api/apis.dart';
 import 'package:prashant_chat_app/main.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
 
@@ -29,15 +32,15 @@ class _ChatScreenState extends State<ChatScreen> {
               Expanded(
                 child: StreamBuilder(
                   // This stream will take data from Firestore collection and it will give data to the ListView builder
-                  stream: null,
+                  stream: APIs.getAllMessages(),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       // if the data is loading
                       case ConnectionState.waiting:
                       case ConnectionState.none:
-                      // return Center(
-                      //   child: CircularProgressIndicator(),
-                      // );
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
                 
                       // if some or all data is loaded then show it
                       case ConnectionState.active:
@@ -45,7 +48,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 
                         // Storing the data from snapshots in "data" to use further
                 
-                        // final data = snapshot.data?.docs;
+                        final data = snapshot.data?.docs;
+
+                        //print method for gtting the data in json format and then we convert to dart format
+                        debugPrint('\nData: ${jsonEncode(data![0].data())}');
                         // _list =
                         //     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
                         //         [];
