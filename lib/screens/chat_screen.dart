@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:prashant_chat_app/main.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
 
@@ -21,15 +22,17 @@ class _ChatScreenState extends State<ChatScreen> {
           automaticallyImplyLeading: false,
           flexibleSpace: _appbar(),
         ),
+        body: Column(
+          children: [_chatInput()],
+        ),
       ),
     );
   }
 
+  //app bar widget
   Widget _appbar() {
     return InkWell(
-      onTap: () {
-        
-      },
+      onTap: () {},
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -41,9 +44,11 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Row(
           children: [
             //back button
-            IconButton(onPressed: () {
-              Navigator.pop(context);
-            }, icon: Icon(Icons.arrow_back_ios)),
+            IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.arrow_back_ios)),
             //user profile picture
             ClipRRect(
               borderRadius: BorderRadius.circular(
@@ -73,7 +78,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: Colors.black87,
                       fontWeight: FontWeight.w500),
                 ),
-                SizedBox(height: 3,),
+                SizedBox(
+                  height: 3,
+                ),
                 //lastseen
                 Text(
                   'Last seen not avialable',
@@ -86,6 +93,74 @@ class _ChatScreenState extends State<ChatScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  // bottom chat input feild
+  Widget _chatInput() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Row(
+        children: [
+          Expanded(
+            child: Card(
+              elevation: 4,
+              shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              child: Row(
+                children: [
+                  //emoji button
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.emoji_emotions,
+                      color: Colors.lightBlue,
+                    ),
+                  ),
+      
+                  Expanded(
+                      child: TextField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                        hintText: 'Type something...',
+                        hintStyle: TextStyle(color: Colors.black54),
+                        border: InputBorder.none),
+                  )),
+                  //take image from gallery button
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.photo,
+                      color: Colors.lightBlue,
+                    ),
+                  ),
+                  //take image from camera
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.camera_alt_rounded,
+                      color: Colors.lightBlue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      
+          //send messsage button
+          MaterialButton(
+            minWidth: 0,
+            padding: EdgeInsets.only(top: 10, left: 10, right: 5, bottom: 10),
+            onPressed: () {},
+            child: Icon(
+              Icons.send_rounded, color: Colors.white,
+            ),
+            color: Colors.green,
+            shape: CircleBorder(),
+          )
+        ],
       ),
     );
   }
