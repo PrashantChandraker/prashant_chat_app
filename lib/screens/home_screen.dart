@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: SafeArea(
           child: Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: Color.fromARGB(255, 227, 244, 246),
             //appbar
             appBar: AppBar(
               leading: IconButton(

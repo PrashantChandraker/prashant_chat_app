@@ -4,8 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:prashant_chat_app/api/apis.dart';
+import 'package:prashant_chat_app/helpers/message.dart';
 import 'package:prashant_chat_app/main.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
+import 'package:prashant_chat_app/widgets/message_card.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatUser user;
@@ -16,6 +18,9 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+
+  // for storing all messages
+  List<Message> _list=[];
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -23,6 +28,8 @@ class _ChatScreenState extends State<ChatScreen> {
      onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: Color.fromARGB(255, 227, 244, 246),
+
           appBar: AppBar(
             automaticallyImplyLeading: false,
             flexibleSpace: _appbar(),
@@ -56,7 +63,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         //     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
                         //         [];
                 
-                        final _list = [];
+                        _list.clear(); // to clear the older 
+                        _list.add(Message(formId: APIs.user.uid, msg: 'hii', toId: 'Maine bheja', read: '', type: Type.text, sent: '12:00 AM'));
+                        
+                        _list.add(Message(formId: 'Maine bheja', msg: 'Hello', toId: APIs.user.uid, read: '', type: Type.text, sent: '12:05 AM'));
                 
                         if (_list.isNotEmpty) {
                           return ListView.builder(
@@ -69,8 +79,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               // final name = user['name'];
                               // final about = user['about'];
                 
-                              return Text(
-                                  'Message: ${_list[index]}'); // It will print on screen the name and about
+                              return Messagecard(message: _list[index],);// It will print on screen the name and about
                             },
                           );
                         } else {
