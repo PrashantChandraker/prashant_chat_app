@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:prashant_chat_app/api/apis.dart';
 import 'package:prashant_chat_app/helpers/message.dart';
+import 'package:prashant_chat_app/helpers/my_date_util.dart';
 import 'package:prashant_chat_app/main.dart';
 
 class Messagecard extends StatefulWidget {
@@ -16,13 +17,20 @@ class Messagecard extends StatefulWidget {
 class _MessagecardState extends State<Messagecard> {
   @override
   Widget build(BuildContext context) {
-    return APIs.user.uid == widget.message.formId
+    return APIs.user.uid == widget.message.fromId
         ? _greenMessage()
         : _blueMessage();
   }
 
   //semder or another user message
   Widget _blueMessage() {
+
+    //update last read message if sender and reciver are diffirent
+    if(widget.message.read.isEmpty){
+      APIs.updateMessageReadStatus(widget.message);
+
+      debugPrint('message card ---------- \nMessage read updated');
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -34,9 +42,9 @@ class _MessagecardState extends State<Messagecard> {
             decoration: BoxDecoration(
                 color: Colors.blue.shade200,
                 borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(22),
-                    topRight: Radius.circular(22),
-                    bottomRight: Radius.circular(22)),
+                    bottomLeft: Radius.circular(0),
+                    topRight: Radius.circular(10),
+                    bottomRight: Radius.circular(40)),
                 border: Border.all(color: Colors.black)),
             child: Padding(
               padding: EdgeInsets.all(mq.width * 0.03),
@@ -53,9 +61,9 @@ class _MessagecardState extends State<Messagecard> {
         Padding(
           padding: EdgeInsets.only(right: mq.width * 0.04),
           child: Text(
-            widget.message.sent,
-            style: TextStyle(fontSize: 13, color: Colors.black54),
-          ),
+             MyDateUtil.getFormattedTime(context: context, time: widget.message.sent),
+              style: TextStyle(fontSize: 13, color: Colors.black54),
+            ),
         )
       ],
     );
@@ -74,6 +82,7 @@ class _MessagecardState extends State<Messagecard> {
               width: 10,
             ),
             // double tick, blue icon for messge read
+            if(widget.message.read.isNotEmpty)
             Icon(
               Icons.done_all_rounded,
               color: Colors.blue,
@@ -85,9 +94,9 @@ class _MessagecardState extends State<Messagecard> {
               width: 3,
             ),
 
-            // read time
+            // sent time
             Text(
-              widget.message.read + '12:05 PM',
+             MyDateUtil.getFormattedTime(context: context, time: widget.message.sent),
               style: TextStyle(fontSize: 13, color: Colors.black54),
             ),
           ],
@@ -100,9 +109,9 @@ class _MessagecardState extends State<Messagecard> {
             decoration: BoxDecoration(
                 color: Colors.green.shade200,
                 borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(22),
-                    topLeft: Radius.circular(22),
-                    bottomRight: Radius.circular(22)),
+                    bottomLeft: Radius.circular(40),
+                    topLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(0)),
                 border: Border.all(
                   color: Colors.black,
                 )),

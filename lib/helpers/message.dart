@@ -1,13 +1,13 @@
 class Message {
   Message({
-    required this.formId,
+    required this.fromId,
     required this.msg,
     required this.toId,
     required this.read,
     required this.type,
     required this.sent,
   });
-  late final String formId;
+  late final String fromId;
   late final String msg;
   late final String toId;
   late final String read;
@@ -15,7 +15,7 @@ class Message {
   late final Type type;
   
   Message.fromJson(Map<String, dynamic> json){
-    formId = json['formId'].toString();
+    fromId = json['fromId'].toString();
     msg = json['msg'].toString();
     toId = json['toId'].toString();
     read = json['read'].toString();
@@ -25,7 +25,7 @@ class Message {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
-    data['formId'] = formId;
+    data['fromId'] = fromId;
     data['msg'] = msg;
     data['toId'] = toId;
     data['read'] = read;
