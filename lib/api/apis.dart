@@ -134,7 +134,7 @@ class APIs {
         fromId: user.uid,
         msg: msg,
         toId: chatuser.id,
-        read:'',
+        read: '',
         type: Type.text,
         sent: time);
 
@@ -149,5 +149,15 @@ class APIs {
         .collection('chats/${getConversationID(message.fromId)}/messages/')
         .doc(message.sent)
         .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
+  }
+
+  //get only last message of a specific chat
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessage(
+      ChatUser user) {
+    return firestore
+        .collection('chats/${getConversationID(user.id)}/messages/')
+        .orderBy('sent', descending: true) // to get the senders last message
+        .limit(1)
+        .snapshots();
   }
 }
