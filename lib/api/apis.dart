@@ -60,7 +60,7 @@ class APIs {
         .set(chatUser.toJson());
   }
 
-  // for getting al users from firestore database
+  // for getting all users from firestore database
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
     return firestore
@@ -106,6 +106,20 @@ class APIs {
     });
   }
 
+  //for getting specific user info
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
+      ChatUser chatUser) {
+    return firestore
+        .collection('users')
+        .where('id', isEqualTo: chatUser.id)
+        .snapshots();
+  }
+
+  //update online or last active status of user
+  static Future<void> updateActiveStatus(bool isOnline) async {
+    firestore.collection('users').doc(user.uid).update({'is_online': isOnline, 'last_active': DateTime.now().millisecondsSinceEpoch.toString()});
+  }
+
 /*************************** Chat Screen related APIs ***************************/
 
   // chats (collection)  --> conversation_id (doc) --> messages (collection)  --> message (doc)
@@ -121,12 +135,15 @@ class APIs {
       ChatUser user) {
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages/')
-        .orderBy('sent',descending: true) // to reorder the chats upside down and ten we reverse the order in listview builder
+        .orderBy('sent',
+            descending:
+                true) // to reorder the chats upside down and ten we reverse the order in listview builder
         .snapshots();
   }
 
   // for sending message
-  static Future<void> sendMessage(ChatUser chatuser, String msg, Type type) async {
+  static Future<void> sendMessage(
+      ChatUser chatuser, String msg, Type type) async {
     //message sending time (also used as id)
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -161,8 +178,6 @@ class APIs {
         .limit(1)
         .snapshots();
   }
-
-
 
   //send chat image
   static Future<void> sendChatImage(ChatUser chatUser, File file) async {

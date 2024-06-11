@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:prashant_chat_app/api/apis.dart';
 import 'package:prashant_chat_app/helpers/message.dart';
+import 'package:prashant_chat_app/helpers/my_date_util.dart';
 import 'package:prashant_chat_app/main.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
 import 'package:prashant_chat_app/widgets/message_card.dart';
@@ -26,7 +27,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // //for storing value of showing or hiding emoji
   // bool _showEmoji = false;
-  bool _isImageUploading = false; //to check image is uploading or not from gallery
+  bool _isImageUploading =
+      false; //to check image is uploading or not from gallery
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -77,7 +79,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
                         if (_list.isNotEmpty) {
                           return ListView.builder(
-                            reverse: true, // so that we dont need to scroll to bottom for chats
+                            reverse:
+                                true, // so that we dont need to scroll to bottom for chats
                             padding: EdgeInsets.only(top: 3),
                             itemCount: _list.length,
                             physics: BouncingScrollPhysics(),
@@ -103,20 +106,20 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               ),
-                  if(_isImageUploading) // is image is uploading then it will be called
+              if (_isImageUploading) // is image is uploading then it will be called
                 Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: CircularProgressIndicator(strokeWidth: 2,),
-                  )),
-
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    )),
 
               //chat input feild
               _chatInput(),
 
               //emojis will be placed here
-              
             ],
           ),
         ),
@@ -129,66 +132,78 @@ class _ChatScreenState extends State<ChatScreen> {
     return InkWell(
       onTap: () {},
       child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: <Color>[Color(0xff5cfaad), Color(0xff5ff1f5)],
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[Color(0xff5cfaad), Color(0xff5ff1f5)],
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            //back button
-            IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.arrow_back_ios)),
-            //user profile picture
-            ClipRRect(
-              borderRadius: BorderRadius.circular(
-                  mq.height * 0.3), // passing the half height
-              child: CachedNetworkImage(
-                width: mq.height * 0.050,
-                height: mq.height * 0.050,
-                imageUrl: widget.user.image,
-                // placeholder: (context, url) => CircularProgressIndicator(),
-                errorWidget: (context, url, error) => CircleAvatar(
-                  child: Icon(CupertinoIcons.person),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //username
-                Text(
-                  widget.user.name,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500),
-                ),
-                SizedBox(
-                  height: 3,
-                ),
-                //lastseen
-                Text(
-                  'Last seen not avialable',
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w600),
-                )
-              ],
-            )
-          ],
-        ),
-      ),
+          child: StreamBuilder(
+              stream: APIs.getUserInfo(widget.user),
+              builder: (context, snapshot) {
+                final data = snapshot.data?.docs;
+                final list =
+                    data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+
+                
+                return Row(
+                  children: [
+                    //back button
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.arrow_back_ios)),
+                    //user profile picture
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          mq.height * 0.3), // passing the half height
+                      child: CachedNetworkImage(
+                        width: mq.height * 0.050,
+                        height: mq.height * 0.050,
+                        imageUrl: list.isNotEmpty ? list[0].image : widget.user.image,
+                        // placeholder: (context, url) => CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => CircleAvatar(
+                          child: Icon(CupertinoIcons.person),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //username
+                        Text(
+                         list.isNotEmpty? list[0].name : widget.user.name,
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(
+                          height: 3,
+                        ),
+                        //lastseen time of the user
+                        Text(
+                          list.isNotEmpty ? 
+                          list[0].isOnline ? 'Online' :
+                          MyDateUtil.getLastActiveTime(context: context, lastActive: list[0].lastActive) : 
+                          
+                          MyDateUtil.getLastActiveTime(context: context, lastActive: widget.user.lastActive),
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w600),
+                        )
+                      ],
+                    )
+                  ],
+                );
+              })),
     );
   }
 
@@ -218,7 +233,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   //     color: Colors.lightBlue,
                   //   ),
                   // ),
-                  SizedBox(width: 10,),
+                  SizedBox(
+                    width: 10,
+                  ),
                   Expanded(
                       child: TextField(
                     controller: _textcontroller,
@@ -232,23 +249,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   )),
                   //take image from gallery button
                   IconButton(
-                     onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
-                        // Pick multiple images.
-                        final List<XFile> images = await picker.pickMultiImage();
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      // Pick multiple images.
+                      final List<XFile> images = await picker.pickMultiImage();
 
-                        //uploading and sending imagesone by one
-                        for (var i in images) {
-                          setState(() {
-                            _isImageUploading = true;
-                          });
-                          debugPrint('Image path: ${i.path}');
-                          await APIs.sendChatImage(widget.user, File(i.path));
-                          setState(() {
-                            _isImageUploading = false;
-                          });
-                        }
-                      },
+                      //uploading and sending imagesone by one
+                      for (var i in images) {
+                        setState(() {
+                          _isImageUploading = true;
+                        });
+                        debugPrint('Image path: ${i.path}');
+                        await APIs.sendChatImage(widget.user, File(i.path));
+                        setState(() {
+                          _isImageUploading = false;
+                        });
+                      }
+                    },
                     icon: Icon(
                       Icons.photo,
                       color: Colors.lightBlue,
@@ -256,25 +273,26 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   //take image from camera
                   IconButton(
-                   onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
-                        // Pick an image.
-                        final XFile? image = await picker.pickImage(source: ImageSource.camera);
-                        if(image!=null){
-                          debugPrint('Image path: ${image.path}');
-                          setState(() {
-                            _isImageUploading = true;
-                          });
-                         
-                          await APIs.sendChatImage(widget.user, File(image.path));
-                          setState(() {
-                            _isImageUploading = false;
-                          });
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      // Pick an image.
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.camera);
+                      if (image != null) {
+                        debugPrint('Image path: ${image.path}');
+                        setState(() {
+                          _isImageUploading = true;
+                        });
 
-                          // for hiding bottom sheet
-                          // Navigator.pop(context);
-                        }
-                      },
+                        await APIs.sendChatImage(widget.user, File(image.path));
+                        setState(() {
+                          _isImageUploading = false;
+                        });
+
+                        // for hiding bottom sheet
+                        // Navigator.pop(context);
+                      }
+                    },
                     icon: Icon(
                       Icons.camera_alt_rounded,
                       color: Colors.lightBlue,
@@ -291,7 +309,7 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: EdgeInsets.only(top: 10, left: 10, right: 5, bottom: 10),
             onPressed: () {
               if (_textcontroller.text.isNotEmpty) {
-                APIs.sendMessage(widget.user, _textcontroller.text,Type.text);
+                APIs.sendMessage(widget.user, _textcontroller.text, Type.text);
                 _textcontroller.text = '';
               }
             },
