@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:prashant_chat_app/api/apis.dart';
@@ -42,6 +42,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               tooltip: 'Logout',
               autofocus: true,
               onPressed: () async {
+
+                await APIs.updateActiveStatus(false);
+
                 // for showing progress dialog
                 Dialogs.showProgressBar(context);
 
@@ -53,6 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // for moving to home screen
                     Navigator.pop(context);
+
+                    APIs.auth=FirebaseAuth.instance; // to able to relogin to the app
 
                     // replacing home screen with login screen
                     Navigator.pushReplacement(context,

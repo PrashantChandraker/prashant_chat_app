@@ -33,15 +33,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // for updating user active status acccording to lifecycle events
     //resume -- active or online
-    //pause -- inactive or offline 
+    //pause -- inactive or offline
     SystemChannels.lifecycle.setMessageHandler((message) {
       debugPrint(
-          '\nMessage: $message                                               homeScreen');
+          '\nMessage: $message    _______________________________________________________ homeScreen');
+      if (APIs.auth.currentUser != null) // without this-->after logging out also it was showing app lifecycle events as active
+      {
+        if (message.toString().contains('resume'))
+          APIs.updateActiveStatus(true);
+        if (message.toString().contains('pause'))
+          APIs.updateActiveStatus(false);
+      }
 
-
-           if(message.toString().contains('resume'))  APIs.updateActiveStatus(true);
-          if(message.toString().contains('pause'))  APIs.updateActiveStatus(false);
-         
       return Future.value(message);
     });
   }
