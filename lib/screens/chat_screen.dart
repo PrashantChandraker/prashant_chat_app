@@ -9,6 +9,7 @@ import 'package:prashant_chat_app/helpers/message.dart';
 import 'package:prashant_chat_app/helpers/my_date_util.dart';
 import 'package:prashant_chat_app/main.dart';
 import 'package:prashant_chat_app/models/chat_user.dart';
+import 'package:prashant_chat_app/screens/view_profile_screen.dart';
 import 'package:prashant_chat_app/widgets/message_card.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -130,7 +131,9 @@ class _ChatScreenState extends State<ChatScreen> {
   //app bar widget
   Widget _appbar() {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (_)=> ViewProfileScreen(user: widget.user),),);
+      },
       child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
