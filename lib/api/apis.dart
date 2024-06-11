@@ -116,11 +116,12 @@ class APIs {
       ? '${user.uid}_$id'
       : '${id}_${user.uid}';
 
-//for getting all the users from firestore database
+//for getting all messages of a specific conversation from firestore database
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
       ChatUser user) {
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages/')
+        .orderBy('sent',descending: true) // to reorder the chats upside down and ten we reverse the order in listview builder
         .snapshots();
   }
 

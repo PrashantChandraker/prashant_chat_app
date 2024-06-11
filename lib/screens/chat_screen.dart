@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:prashant_chat_app/api/apis.dart';
 import 'package:prashant_chat_app/helpers/message.dart';
@@ -25,6 +26,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // //for storing value of showing or hiding emoji
   // bool _showEmoji = false;
+  bool _isImageUploading = false; //to check image is uploading or not from gallery
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -75,6 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                         if (_list.isNotEmpty) {
                           return ListView.builder(
+                            reverse: true, // so that we dont need to scroll to bottom for chats
                             padding: EdgeInsets.only(top: 3),
                             itemCount: _list.length,
                             physics: BouncingScrollPhysics(),
@@ -100,6 +103,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               ),
+                  if(_isImageUploading) // is image is uploading then it will be called
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: CircularProgressIndicator(strokeWidth: 2,),
+                  )),
+
 
               //chat input feild
               _chatInput(),
@@ -221,7 +232,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   )),
                   //take image from gallery button
                   IconButton(
-                    onPressed: () {},
+                     onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        // Pick multiple images.
+                        final List<XFile> images = await picker.pickMultiImage();
+
+                        //uploading and sending imagesone by one
+                        for (var i in images) {
+                          setState(() {
+                            _isImageUploading = true;
+                          });
+                          debugPrint('Image path: ${i.path}');
+                          await APIs.sendChatImage(widget.user, File(i.path));
+                          setState(() {
+                            _isImageUploading = false;
+                          });
+                        }
+                      },
                     icon: Icon(
                       Icons.photo,
                       color: Colors.lightBlue,
@@ -235,8 +262,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         final XFile? image = await picker.pickImage(source: ImageSource.camera);
                         if(image!=null){
                           debugPrint('Image path: ${image.path}');
+                          setState(() {
+                            _isImageUploading = true;
+                          });
                          
                           await APIs.sendChatImage(widget.user, File(image.path));
+                          setState(() {
+                            _isImageUploading = false;
+                          });
 
                           // for hiding bottom sheet
                           // Navigator.pop(context);
