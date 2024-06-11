@@ -125,7 +125,7 @@ class APIs {
   }
 
   // for sending message
-  static Future<void> sendMessage(ChatUser chatuser, String msg) async {
+  static Future<void> sendMessage(ChatUser chatuser, String msg, Type type) async {
     //message sending time (also used as id)
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -135,7 +135,7 @@ class APIs {
         msg: msg,
         toId: chatuser.id,
         read: '',
-        type: Type.text,
+        type: type,
         sent: time);
 
     final ref = firestore
@@ -159,5 +159,33 @@ class APIs {
         .orderBy('sent', descending: true) // to get the senders last message
         .limit(1)
         .snapshots();
+  }
+
+
+
+  //send chat image
+  static Future<void> sendChatImage(ChatUser chatUser, File file) async {
+    //getting image file exension
+    final ext =
+        file.path.split('.').last; // storing last extension after dot in "ext"
+
+    //defining path to store the uploded image
+    //storage file ref with path
+    final ref = storage.ref().child(
+        'images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext'); // using user.uid to store unique images
+    // pushig the file to the firebase
+
+    // uploading image
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((p0) {
+      debugPrint(
+          '\n Data Transfered: ${p0.bytesTransferred / 1000} kb'); // printing the transfered data in ad  of bytes
+    });
+
+    //updating image in firestore databse
+    final imageUrl =
+        await ref.getDownloadURL(); // storng the download url in me.image
+    await sendMessage(chatUser, imageUrl, Type.image);
   }
 }

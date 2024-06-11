@@ -1,8 +1,8 @@
-import 'dart:convert';
-
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:prashant_chat_app/api/apis.dart';
 import 'package:prashant_chat_app/helpers/message.dart';
 import 'package:prashant_chat_app/main.dart';
@@ -22,6 +22,9 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Message> _list = [];
   // for handling message text changes
   final _textcontroller = TextEditingController();
+
+  // //for storing value of showing or hiding emoji
+  // bool _showEmoji = false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -97,7 +100,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               ),
-              _chatInput()
+
+              //chat input feild
+              _chatInput(),
+
+              //emojis will be placed here
+              
             ],
           ),
         ),
@@ -182,22 +190,27 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: Card(
               elevation: 4,
+              color: const Color.fromARGB(255, 227, 232, 242),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15)),
               child: Row(
                 children: [
                   //emoji button
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.emoji_emotions,
-                      color: Colors.lightBlue,
-                    ),
-                  ),
-
+                  // IconButton(
+                  //   onPressed: () {
+                  //     setState(() {
+                  //       _showEmoji = !_showEmoji;
+                  //     });
+                  //   },
+                  //   icon: Icon(
+                  //     Icons.emoji_emotions,
+                  //     color: Colors.lightBlue,
+                  //   ),
+                  // ),
+                  SizedBox(width: 10,),
                   Expanded(
                       child: TextField(
-                        controller: _textcontroller,
+                    controller: _textcontroller,
                     // scrollPhysics: AlwaysScrollableScrollPhysics(),
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
@@ -216,7 +229,19 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   //take image from camera
                   IconButton(
-                    onPressed: () {},
+                   onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        // Pick an image.
+                        final XFile? image = await picker.pickImage(source: ImageSource.camera);
+                        if(image!=null){
+                          debugPrint('Image path: ${image.path}');
+                         
+                          await APIs.sendChatImage(widget.user, File(image.path));
+
+                          // for hiding bottom sheet
+                          // Navigator.pop(context);
+                        }
+                      },
                     icon: Icon(
                       Icons.camera_alt_rounded,
                       color: Colors.lightBlue,
@@ -232,9 +257,9 @@ class _ChatScreenState extends State<ChatScreen> {
             minWidth: 0,
             padding: EdgeInsets.only(top: 10, left: 10, right: 5, bottom: 10),
             onPressed: () {
-              if(_textcontroller.text.isNotEmpty){
-                APIs.sendMessage(widget.user, _textcontroller.text);
-                _textcontroller.text='';
+              if (_textcontroller.text.isNotEmpty) {
+                APIs.sendMessage(widget.user, _textcontroller.text,Type.text);
+                _textcontroller.text = '';
               }
             },
             child: Icon(
