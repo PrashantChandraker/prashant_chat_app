@@ -32,6 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
       false; //to check image is uploading or not from gallery
   @override
   Widget build(BuildContext context) {
+    
     return GestureDetector(
       // for hiding keyboard when touch anywhere
       onTap: () => FocusScope.of(context).unfocus(),
