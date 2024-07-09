@@ -2,6 +2,7 @@
 
 A new Flutter project.
 
+<img src="https://github.com/Mirzaazmath/flutter_60_ui_challange/blob/main/ui_3_neo_fitbit_app/assets/output/Screenshot.png"  height="400" />
 ## Getting Started
 
 This project is a starting point for a Flutter application.
